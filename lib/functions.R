@@ -87,9 +87,7 @@ movie_data_transform <- function(movie) {
 
 
 
-
-
-calc_weight <- function(data, method = "pearson") {
+calc_weight <- function(data, run.pearson=F, run.entropy=F, run.spearman=F, run.sqdiff=F, run.cosin = F) {
   
   ## Calculate similarity weight matrix
   ##
@@ -102,7 +100,6 @@ calc_weight <- function(data, method = "pearson") {
   # Iniate the similarity weight matrix
   data       <- as.matrix(data)
   weight_mat <- matrix(NA, nrow = nrow(data), ncol = nrow(data))
-  
   weight_func <- function(rowA, rowB) {
     
     # weight_func takes as input two rows (thought of as rows of the data matrix) and 
@@ -112,9 +109,28 @@ calc_weight <- function(data, method = "pearson") {
     if (sum(joint_values) == 0) {
       return(0)
     } else {
-      if (method == 'pearson') {
+      if (run.pearson) {
         return(cor(rowA[joint_values], rowB[joint_values], method = 'pearson'))
       }
+      if (run.entropy) {
+          library("infotheo")
+        return(mutinformation(rowA[joint_values], rowB[joint_values], method = 'emp'))
+      }
+      if (run.spearman) {
+        return(cor(rowA[joint_values], rowB[joint_values], method = 'spearman'))
+      }
+      if (run.sqdiff) {
+        return(mean((rowA[joint_values]-rowB[joint_values])^2))
+      }
+      if(run.cosin){
+        if(!require("lsa")){
+          install.packages("lsa")
+        }
+        library("lsa")
+      stand_rowA <- as.vector(scale(rowA[joint_values]))
+      stand_rowB <- as.vector(scale(rowB[joint_values]))               
+      return(cosine(stand_rowA, stand_rowB))
+      } 
     }
   }
   
