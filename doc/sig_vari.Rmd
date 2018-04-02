@@ -1,0 +1,103 @@
+---
+title: "Untitled"
+author: "Kai"
+date: "April 1, 2018"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+```{r pressure, echo=FALSE}
+setwd("/Users/Kai Li/Documents/GitHub/project-3-algorithms-project-3-algorithms-group-2")
+source("./lib/functions.R")
+
+dir_MS <- "/data/Proj3_Data/MS_sample/"
+
+load("./output/MS_UI.Rdata")
+load("./output/movie_UI.Rdata")
+
+```
+
+
+```{r}
+# Calculate significance weighting
+
+calc_significance <- function(data) {
+  ## Calculate significance coefficient matri
+  ##
+  ## input: data   - movie data or MS data in user-item matrix form
+  ##
+  ## output: significance weighting matrix
+  
+  
+  # Iniate the similarity weight matrix
+  data       <- as.matrix(data)
+  sig_weight <- matrix(NA, nrow = nrow(data), ncol = nrow(data))
+  
+  significance_func <- function(rowA, rowB) {
+    
+    # weight_func takes as input two rows (thought of as rows of the data matrix) and 
+    # calculates the similarity between the two rows according to 'method'
+    
+    joint_values <- !is.na(rowA) & !is.na(rowB)
+    k <-  length(rowA[joint_values])
+    if (k >= 50) {
+      num <- 1
+      return(num)
+          } 
+    else {
+      num <- k/50
+      return(num)
+    }
+      
+  }
+  
+  # Loops over the rows and calculate sall similarities using significance_func
+  for(i in 1:nrow(data)) {
+    sig_weight[i, ] <- apply(data, 1, significance_func, data[i, ])
+    print(i)
+  }
+  return(sig_weight)
+}
+
+save(sig_weight, file = "./output/sig_weight.RData")
+```
+
+
+
+```{r}
+
+calc_variance <- function(data) {
+  ## Calculate variance weighting matrix
+  ##
+  ## input: data   - movie data or MS data in user-item matrix form
+  ##
+  ## output: variance weighting matrix
+  
+  
+  # Iniate the similarity weight matrix
+  data       <- as.matrix(data)
+  var_weight <- matrix(NA, ncol = ncol(data))
+  
+
+  mean <- colMeans(data, na.rm = T, dims = 1)
+  data_sub_mean <- (data-mean)^2
+  vari <- colSums(data_sub_mean, na.rm = T, dims = 1) / (ncol(data_sub_mean)-1)
+
+
+  for (i in 1:ncol(data)) {
+    max  <- max(data[,i], na.rm=T)
+    min  <- min(data[,i], na.rm=T)
+    var_weight[i] <- (vari[i] - min)/max
+  }
+  return(var_weight)
+}
+
+save(var_weight, file = "./output/var_weight.RData")
+```
+
+

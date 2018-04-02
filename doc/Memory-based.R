@@ -18,7 +18,7 @@ library("DescTools")
 library("infotheo")
 
 
-setwd("/Users/wcheng/Desktop/Spring 2018/data science/project-3-algorithms-project-3-algorithms-group-2")
+setwd("/Users/Kai Li/Documents/GitHub/project-3-algorithms-project-3-algorithms-group-2")
 source("./lib/functions.R")
 
 dir_MS <- "/data/Proj3_Data/MS_sample/"
@@ -219,6 +219,7 @@ save(MS_ent, file = "./output/MS_ent.RData")
 # Calculate the spearman weights on the movie data
 # The below took  minutes
 
+#3668.39s
 tm_movie_spm <- system.time(movie_spm <- 
                               calc_weight(movie_UI,run.spearman = T))
 save(movie_spm, file = "./output/movie_spm.RData")
@@ -227,6 +228,7 @@ save(movie_spm, file = "./output/movie_spm.RData")
 # Calculate the spearman weights on the MS data
 # The below took  minutes
 
+#Time: 2071s
 tm_MS_spm <- system.time(MS_spm <- 
                            calc_weight(MS_UI, run.spearman = T))
 save(MS_spm, file = "./output/MS_spm.RData")
