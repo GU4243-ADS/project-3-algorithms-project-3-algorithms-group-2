@@ -86,8 +86,8 @@ movie_data_transform <- function(movie) {
 
 
 
-
-calc_weight <- function(data, run.pearson=F, run.entropy=F, run.spearman=F, run.sqdiff=F, run.cosin = F) {
+system.time(calc_weight(movie_UI[1:10,], run.sim = T))
+calc_weight <- function(data, run.pearson=F, run.entropy=F, run.spearman=F, run.sqdiff=F, run.cosin = F, run.sim) {
   
   ## Calculate similarity weight matrix
   ##
@@ -130,7 +130,50 @@ calc_weight <- function(data, run.pearson=F, run.entropy=F, run.spearman=F, run.
       stand_rowA <- as.vector(scale(rowA[joint_values]))
       stand_rowB <- as.vector(scale(rowB[joint_values]))               
       return(cosine(stand_rowA, stand_rowB))
-      } 
+      }
+      if(run.sim){
+        
+        j <- !is.na(rowA) | !is.na(rowB)
+        rowA <- rowA[j]
+        rowB <- rowB[j]
+        if(length(rowA) <= 1){
+          score <- 0
+        }else{
+          # Convert to 1/0 vector
+          rowA <- ifelse(is.na(rowA), 0, 1)
+          rowB <- ifelse(is.na(rowB), 0, 1)
+          
+          # First construct the user and object score matrix
+          s_user <- diag(x = 1, 2,2)
+          s_obj <- diag(x = 1, length(rowA), length(rowB))
+          p_user <- rowA %*% t(rowB)
+          # Find |O(X)|,|O(Y)|
+          len_x <- sum(rowA)
+          len_y <- sum(rowB)
+          # Iteratively update the scores of user and objects
+          for(k in 1:(K+1)){
+            # Calculate s_user
+            s_user[1,2]=s_user[2,1] <- sum(s_obj * p_user)*C1/(len_x*len_y)
+            
+            # Now update s_obj
+            for(row_i in 1:nrow(s_obj)){
+              for(col_j in 1:ncol(s_obj)){
+                if(row_i == col_j){
+                  s_obj[row_i, col_j] <- 1
+                }else{
+                  I_a <- as.vector(c(rowA[[row_i]],rowB[[row_i]]))
+                  I_b <- as.vector(c(rowA[[col_j]], rowB[[col_j]]))
+                  p_obj <- I_a %*% t(I_b)
+                  s_obj[row_i, col_j] <- sum(s_user * p_obj) * C2/(sum(I_a) * sum(I_b))
+                }
+              }
+            }
+          }
+          score <- s_user[1,2]
+          
+        }
+        return(score)
+      }
     }
   }
   

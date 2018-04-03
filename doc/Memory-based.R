@@ -46,6 +46,10 @@ run.spearman <- F
 run.sqdiff <- F
 run.cosin <- F
 
+# Constants for SimRank calculations
+C1 <- 0.8
+C2 <- 0.8
+K <- 5
 
 
 
