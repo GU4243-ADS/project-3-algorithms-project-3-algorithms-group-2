@@ -99,7 +99,7 @@ calc_weight <- function(data, run.pearson=F, run.entropy=F, run.spearman=F, run.
   
   # Iniate the similarity weight matrix
   data       <- as.matrix(data)
-  weight_mat <- matrix(NA, nrow = nrow(data), ncol = nrow(data))
+  weight_mat <- diag(x = 1, nrow(data), nrow(data))
   weight_func <- function(rowA, rowB) {
     
     # weight_func takes as input two rows (thought of as rows of the data matrix) and 
@@ -178,11 +178,15 @@ calc_weight <- function(data, run.pearson=F, run.entropy=F, run.spearman=F, run.
   }
   
   # Loops over the rows and calculate sall similarities using weight_func
-  for(i in 1:nrow(data)) {
-    weight_mat[i, ] <- apply(data, 1, weight_func, data[i, ])
+  ################ Note ##############
+  # Since similarity weights are symmetric, I decided to only fill the upper
+  # triangle in order to save computation time and space.
+  for(i in 1:(nrow(data)-1)) {
+    weight_mat[i, i:nrow(data) ] <- apply(data[i:nrow(data),], 1, weight_func, data[i, ])
     print(i)
   }
-  return(round(weight_mat, 4))
+  weight_mat <- as.matrix(Matrix::forceSymmetric(round(weight_mat,4), uplo = "U"))
+  return(weight_mat)
 }
 
 
