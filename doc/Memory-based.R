@@ -18,7 +18,7 @@ library("DescTools")
 library("infotheo")
 
 
-setwd("/Users/Kai Li/Documents/GitHub/project-3-algorithms-project-3-algorithms-group-2")
+setwd("/Users/wcheng/Desktop/Spring 2018/data science/project-3-algorithms-project-3-algorithms-group-2")
 source("./lib/functions.R")
 
 dir_MS <- "/data/Proj3_Data/MS_sample/"
@@ -83,27 +83,6 @@ load("./output/MS_UI.Rdata")
 load("./output/movie_UI.Rdata")
 
 
-weight_func <- function(rowA, rowB) {
-  
-  # weight_func takes as input two rows (thought of as rows of the data matrix) and 
-  # calculates the similarity between the two rows according to 'method'
-  
-  joint_values <- !is.na(rowA) & !is.na(rowB)
-  if (sum(joint_values) == 0) {
-    return(0)
-  } else {
-    if (method == 'pearson') {
-      return(cor(rowA[joint_values], rowB[joint_values], method = 'pearson'))
-    }
-  }
-}
-
-# Loops over the rows and calculate sall similarities using weight_func
-for(i in 1:nrow(data)) {
-  weight_mat[i, ] <- apply(data, 1, weight_func, data[i, ])
-  print(i)
-}
-return(round(weight_mat, 4))
 
 
 
@@ -206,17 +185,33 @@ save(MS_sqd, file = "./output/MS_sqd.RData")
 ######## Calculating the Predictions for the Users ########
 ###########################################################
 
+load("./output/MS_sqd.Rdata")
+load("./output/movie_sqd.Rdata")
 
 
 
-# Calculate predictions for MS
+
+# Calculate predictions for MS based on pearson correlation
 # This calculation took me 15 minutes
 
 MS_pred <- pred_matrix(MS_UI, MS_sim)
 save(MS_pred, file = "./output/MS_pred.RData")
 
-# Calculate predictions for movies
+# Calculate predictions for movies based on pearson correlation
 # This calculation took me 1+ hour
 
 movie_pred <- pred_matrix(movie_UI, movie_sim)
 save(movie_pred, file = "./output/movie_pred.RData")
+
+# Calculate predictions for MS based on squared difference similarity
+# This calculation took me 15 minutes
+
+MS_pred_sqd <- pred_matrix(MS_UI, MS_sqd)
+save(MS_pred_sqd, file = "./output/MS_pred_sqd.RData")
+
+# Calculate predictions for movies based on squared difference similarity
+# This calculation took me 1+ hour
+
+movie_pred_sqd <- pred_matrix(movie_UI, movie_sqd)
+save(movie_pred_sqd, file = "./output/movie_pred_sqd.RData")
+

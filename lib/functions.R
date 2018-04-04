@@ -86,7 +86,6 @@ movie_data_transform <- function(movie) {
 
 
 
-system.time(calc_weight(movie_UI[1:10,], run.sim = T))
 calc_weight <- function(data, run.pearson=F, run.entropy=F, run.spearman=F, run.sqdiff=F, run.cosin = F, run.sim) {
   
   ## Calculate similarity weight matrix
