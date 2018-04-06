@@ -70,25 +70,11 @@ movie_train <- movie_train[, 2:4]
 movie_UI <- movie_data_transform(movie_train)
 save(movie_UI, file = "./output/movie_UI.RData")
 
-# Some calculations
-total_ratings <- rowSums(movie_UI, na.rm = TRUE)
-
-table(total_ratings)
-mean(total_ratings)
-median(total_ratings)
 
 
 # If we want to directly pull out the user-item matrix from the data folder
 load("./output/MS_UI.Rdata")
 load("./output/movie_UI.Rdata")
-
-
-
-
-
-
-# 
-
 
 
 
@@ -126,31 +112,28 @@ save(movie_ent, file = "./output/movie_ent.RData")
 
 # Calculate the entropy weights on the MS data
 # The below took 51548 seconds
-# 29103.785   500.891 51548.812
 
 tm_MS_ent <- system.time(MS_ent <- 
                            calc_weight(MS_UI, run.entropy = T))
 save(MS_ent, file = "./output/MS_ent.RData")
 
 # Calculate the spearman weights on the movie data
-# The below took  minutes
+# The below took 3668.39s
 
-#3668.39s
 tm_movie_spm <- system.time(movie_spm <- 
                               calc_weight(movie_UI,run.spearman = T))
 save(movie_spm, file = "./output/movie_spm.RData")
 
 
 # Calculate the spearman weights on the MS data
-# The below took  minutes
+# The below took 2071s
 
-#Time: 2071s
 tm_MS_spm <- system.time(MS_spm <- 
                            calc_weight(MS_UI, run.spearman = T))
 save(MS_spm, file = "./output/MS_spm.RData")
 
 # Calculate the cosin weights on the movie data
-# The below took  minutes
+# The below took  20808 seconds
 
 tm_movie_cos <- system.time(movie_cos <- 
                               calc_weight(movie_UI,run.cosin = T))
@@ -158,7 +141,7 @@ save(movie_cos, file = "./output/movie_cos.RData")
 
 
 # Calculate the cosin weights on the MS data
-# The below took  minutes
+# The below took 13891 seconds
 
 tm_MS_cos <- system.time(MS_cos <- 
                            calc_weight(MS_UI, run.cosin = T))
@@ -172,7 +155,7 @@ tm_movie_sqd <- system.time(movie_sqd <-
 save(movie_sqd, file = "./output/movie_sqd.RData")
 
 
-# Calculate the cosin weights on the MS data
+# Calculate the squared difference weights on the MS data
 # The below took 1560 seconds
 
 tm_MS_sqd <- system.time(MS_sqd <- 
