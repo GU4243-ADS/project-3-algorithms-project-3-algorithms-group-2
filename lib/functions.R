@@ -85,8 +85,7 @@ movie_data_transform <- function(movie) {
 }  
 
 
-
-calc_weight <- function(data, run.pearson=F, run.entropy=F, run.spearman=F, run.sqdiff=F, run.cosin = F, run.sim) {
+calc_weight <- function(data, run.pearson=F, run.entropy=F, run.spearman=F, run.sqdiff=F, run.cosin = F) {
   
   ## Calculate similarity weight matrix
   ##
@@ -112,6 +111,9 @@ calc_weight <- function(data, run.pearson=F, run.entropy=F, run.spearman=F, run.
         return(cor(rowA[joint_values], rowB[joint_values], method = 'pearson'))
       }
       if (run.entropy) {
+        if(!require("infotheo")){
+          install.packages("infotheo")
+        }
           library("infotheo")
         return(mutinformation(rowA[joint_values], rowB[joint_values], method = 'emp'))
       }
@@ -130,49 +132,6 @@ calc_weight <- function(data, run.pearson=F, run.entropy=F, run.spearman=F, run.
       stand_rowB <- as.vector(scale(rowB[joint_values]))               
       return(cosine(stand_rowA, stand_rowB))
       }
-      if(run.sim){
-        
-        j <- !is.na(rowA) | !is.na(rowB)
-        rowA <- rowA[j]
-        rowB <- rowB[j]
-        if(length(rowA) <= 1){
-          score <- 0
-        }else{
-          # Convert to 1/0 vector
-          rowA <- ifelse(is.na(rowA), 0, 1)
-          rowB <- ifelse(is.na(rowB), 0, 1)
-          
-          # First construct the user and object score matrix
-          s_user <- diag(x = 1, 2,2)
-          s_obj <- diag(x = 1, length(rowA), length(rowB))
-          p_user <- rowA %*% t(rowB)
-          # Find |O(X)|,|O(Y)|
-          len_x <- sum(rowA)
-          len_y <- sum(rowB)
-          # Iteratively update the scores of user and objects
-          for(k in 1:(K+1)){
-            # Calculate s_user
-            s_user[1,2]=s_user[2,1] <- sum(s_obj * p_user)*C1/(len_x*len_y)
-            
-            # Now update s_obj
-            for(row_i in 1:nrow(s_obj)){
-              for(col_j in 1:ncol(s_obj)){
-                if(row_i == col_j){
-                  s_obj[row_i, col_j] <- 1
-                }else{
-                  I_a <- as.vector(c(rowA[[row_i]],rowB[[row_i]]))
-                  I_b <- as.vector(c(rowA[[col_j]], rowB[[col_j]]))
-                  p_obj <- I_a %*% t(I_b)
-                  s_obj[row_i, col_j] <- sum(s_user * p_obj) * C2/(sum(I_a) * sum(I_b))
-                }
-              }
-            }
-          }
-          score <- s_user[1,2]
-          
-        }
-        return(score)
-      }
     }
   }
   
@@ -189,6 +148,100 @@ calc_weight <- function(data, run.pearson=F, run.entropy=F, run.spearman=F, run.
 }
 
 
+# Calculate significance weighting
+
+calc_significance <- function(data) {
+  ## Calculate significance coefficient matrix
+  ##
+  ## input: data   - movie data or MS data in user-item matrix form
+  ##
+  ## output: significance weighting matrix
+  
+  
+  # Iniate the similarity weight matrix
+  data       <- as.matrix(data)
+  sig_weight <- matrix(NA, nrow = nrow(data), ncol = nrow(data))
+  
+  significance_func <- function(rowA, rowB) {
+    
+    # significance_func takes as input two rows (thought of as rows of the data matrix) and 
+    # calculates the similarity between the two rows according to 'method'
+    
+    joint_values <- !is.na(rowA) & !is.na(rowB)
+    k <-  length(rowA[joint_values])
+    if (k >= 50) {
+      num <- 1
+      return(num)
+    } 
+    else {
+      num <- k/50
+      return(num)
+    }
+    
+  }
+  
+  # Loops over the rows and calculate sall similarities using significance_func
+  for(i in 1:nrow(data)) {
+    sig_weight[i, ] <- apply(data, 1, significance_func, data[i, ])
+    print(i)
+  }
+  return(sig_weight)
+}
+
+
+calc_weight_var <- function(data, method = "pearson") {
+  
+  ## Calculate variance weight matrix
+  ##
+  ## input: data   - movie data or MS data in user-item matrix form
+  ##        method - 'pearson'
+  ##
+  ## output: variance weight matrix
+  
+  
+  # Iniate the variance weight matrix
+  if(!require("wCorr")){
+    install.packages("wCorr")
+  }
+  library(wCorr)
+  
+  data       <- as.matrix(movie_UI)
+  weight_mat_var <- matrix(NA, nrow = nrow(data), ncol = nrow(data))
+  
+  var_weight <- matrix(NA, ncol = ncol(data))
+  mean <- colMeans(data, na.rm = T, dims = 1)
+  data_sub_mean <- (data-mean)^2
+  vari <- colSums(data_sub_mean, na.rm = T, dims = 1) / (ncol(data_sub_mean)-1)
+  for (i in 1:ncol(data)) {
+    max  <- max(data[,i], na.rm=T)
+    min  <- min(data[,i], na.rm=T)
+    var_weight[i] <- (vari[i] - min)/max
+    
+  }
+  
+  
+  weight_func_var <- function(rowA, rowB) {
+    
+    # weight_func takes as input two rows (thought of as rows of the data matrix) and 
+    # calculates the similarity between the two rows according to 'method'
+    
+    joint_values <- !is.na(rowA) & !is.na(rowB)
+    if (sum(joint_values) == 0) {
+      return(0)
+    } else {
+      if (method == 'pearson') {
+        return(weightedCorr(rowA[joint_values], rowB[joint_values], method = "Pearson", weights = var_weight[joint_values], ML = FALSE, fast = TRUE))
+      }
+    }
+  }
+  
+  # Loops over the rows and calculate sall similarities using weight_func
+  for(i in 1:(nrow(data)-1)) {
+    weight_mat[i, i:nrow(data) ] <- apply(data[i:nrow(data),], 1, weight_func_var, data[i, ])
+    print(i)
+  }
+  return(round(weight_mat_var, 4))
+}
 
 
 
@@ -232,3 +285,111 @@ pred_matrix <- function(data, simweights) {
   return(pred_mat)
 }
 
+#######################################
+# Match matrix function
+# Input: Full matrix
+#        Test matrix
+# Output: return a full matrix, with nonzero values from test matrix corrected
+#######################################
+match_the_matrix <- function(small_matrix, full_matrix){
+  
+  result <- full_matrix
+  for(i in 1:nrow(small_matrix)){
+    for(j in 1:ncol(small_matrix)){
+      if(small_matrix[i,j] != 0 & !is.na(small_matrix[i,j])){
+        result[which(rownames(full_matrix) == rownames(small_matrix)[i]),
+               which(colnames(full_matrix) == colnames(small_matrix)[j])] <- small_matrix[i,j]
+      }
+    }
+  }
+  return(result)
+}
+
+#######################################
+# Rank matrix function (helper function)
+# 
+# Input: observed matrix and predicted matrix, they should be in same dim
+#        
+# Output: return the ranked test set matrix, based on predicted vote values.
+#######################################
+rank_matrix <- function(pred_matrix, observed_matrix){
+  result = matrix(NA, nrow(observed_matrix), ncol(observed_matrix))
+  
+  for (i in 1:nrow(observed_matrix)){
+    
+    # sort predicted values for each row
+    sorted_pred = sort(pred_matrix[i,], decreasing=TRUE) 
+    
+    # sort observed values based on predicted values.
+    sorted_obs = unlist(observed_matrix[i,][names(sorted_pred)])
+    
+    # save the ranked row in the new matrix.
+    result[i,] = unname(sorted_obs)
+  }
+  rownames(result) = rownames(observed_matrix)
+  return(result)
+}
+
+#######################################
+# Ranked Scroing function
+# Input: predicted matrix
+#        observed matrix
+#        alpha value
+#        These matrices need to be in same dim
+# Output: return the ranked score for the predicted matrix
+#######################################
+
+ranked_scoring <- function(pred_matrix, observed_matrix, alpha,d){
+  # ranked matrix of the observed_matrix
+  ranked_mat = rank_matrix(pred_matrix, observed_matrix)
+  adjust = ifelse(ranked_mat - d > 0, ranked_mat - d, 0)
+  
+  nrow = nrow(ranked_mat)
+  ncol = ncol(ranked_mat)
+  
+  # denominator of r_a & r_a_max
+  denominator_mat = matrix(rep(2^(0:(ncol-1)/(alpha-1)), nrow), nrow, ncol, byrow=T)
+  
+  # Get a vector of r_a
+  utility_matrix = adjust/denominator_mat
+  r_a_vector = rowSums(utility_matrix)
+  
+  # Rank the observed_matrix for r_a max in order to have the maximum achievable utility.
+  r_a_max_matrix = t(apply(observed_matrix, 1, sort,decreasing=T))
+  
+  # Get a vector of r_a max
+  max_utility_matrix = r_a_max_matrix/denominator_mat
+  r_a_max_vector = rowSums(max_utility_matrix)
+  
+  # Obtain the r_a / r_a_max score
+  r = 100 * sum(r_a_vector)/sum(r_a_max_vector)
+  
+  return(r)
+  
+}
+
+#######################################
+# MAE function
+# Input: predicted matrix
+#        observed matrix
+#        alpha value
+#        These matrices need to be in same dim
+# Output: return the Mean Absolute Error
+#######################################
+MAE <- function(pred_matrix, observed_matrix){
+  count = 0
+  result = 0
+  for(i in 1:nrow(observed_matrix)){
+    for(j in 1:ncol(observed_matrix)){
+      if(!is.na(observed_matrix[i,j])){
+        result = result + abs(pred_matrix[i,j]-observed_matrix[i,j])
+        count =count +1
+      }
+    }
+    # # Calculate the average absoluate deviation for each user
+    # result[i] <- sum(abs(pred_matrix[i,] - observed_matrix[i,]))/sum(observed_matrix[i,]!= 0)
+  }
+  return(result/count)
+}
+
+!is.na(observed_matrix)

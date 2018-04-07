@@ -22,11 +22,13 @@ setwd("/Users/wcheng/Desktop/Spring 2018/data science/project-3-algorithms-proje
 source("./lib/functions.R")
 
 dir_MS <- "/data/Proj3_Data/MS_sample/"
-
+getwd()
 
 # Load the data
-MS_train <- read.csv(paste(getwd(),dir_MS, "data_train.csv", sep = ""), as.is = TRUE, header = TRUE)
-MS_train <- MS_train[, 2:4]
+MS_test <- read.csv(paste(getwd(),dir_MS, "data_test.csv", sep = ""), as.is = TRUE, header = TRUE)
+MS_test <- MS_test[, 2:4]
+
+
 
 
 # Transform from narrow to wide, i.e. user-item matrix 
@@ -168,7 +170,7 @@ save(MS_sqd, file = "./output/MS_sqd.RData")
 ######## Calculating the Predictions for the Users ########
 ###########################################################
 
-load("./output/MS_sqd.Rdata")
+load("./output/MS_pred.Rdata")
 load("./output/movie_sqd.Rdata")
 
 
