@@ -293,13 +293,11 @@ pred_matrix <- function(data, simweights) {
 #######################################
 match_the_matrix <- function(small_matrix, full_matrix){
   
-  result <- full_matrix
+  result <- small_matrix
   for(i in 1:nrow(small_matrix)){
     for(j in 1:ncol(small_matrix)){
-      if(small_matrix[i,j] != 0 & !is.na(small_matrix[i,j])){
-        result[which(rownames(full_matrix) == rownames(small_matrix)[i]),
-               which(colnames(full_matrix) == colnames(small_matrix)[j])] <- small_matrix[i,j]
-      }
+      result[i,j] <- full_matrix[which(rownames(full_matrix) == rownames(small_matrix)[i]),
+                                 which(colnames(full_matrix) == colnames(small_matrix)[j])]
     }
   }
   return(result)
@@ -391,5 +389,3 @@ MAE <- function(pred_matrix, observed_matrix){
   }
   return(result/count)
 }
-
-!is.na(observed_matrix)
