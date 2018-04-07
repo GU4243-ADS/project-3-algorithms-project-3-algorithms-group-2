@@ -7,7 +7,8 @@ output:
   html_document: default
 ---
 
-#Step0: Load library and data set
+# Step0: Load library and data set
+
 ```{r step0}
 
 if(!require("lsa")){
@@ -37,9 +38,9 @@ movie_test <- movie_test[, 2:4]
 
 ```
 
-#Step1: Data preparation and constants setting
+# Step1: Data preparation and constants setting
 
-##Functions
+## Functions
 + MS_data_transform (Calculate UI matrix for Microsoft data)
 + movie_data_transform (Calculate UI matrix for eachmovie data)
 
@@ -93,9 +94,9 @@ if(!load){
 
 ```
 
-#Step2: Calculate similarity weights
+# Step2: Calculate similarity weights
 
-##Functions
+## Functions
 + calc_weight (Calculate similarity weight matrix, except for simrank)
 + simrank (Calculate simrank score)
 
@@ -209,9 +210,9 @@ if(!load){
 }
 ```
 
-#Step3: Adding significance weights and variance weights
+# Step3: Adding significance weights and variance weights
 
-##Functions
+## Functions
 + calc_significance (Calculate significance coefficient matrix)
 + calc_weight_var (Calculate variance coefficient matrix)
 
@@ -273,9 +274,9 @@ if(!load){
 
 ```
 
-#Step4: Calculating predictions
+# Step4: Calculating predictions
 
-##Functions
+## Functions
 + pred_matrix (Calculate prediction matrix)
 
 ```{r step4}
@@ -374,9 +375,9 @@ if(!load){
 }
 ```
 
-#Step4: Calculating predictions
+# Step4: Calculating predictions
 
-##Functions
+## Functions
 + match_the_matrix (return a full matrix, with nonzero values from test matrix corrected)
 + rank_matrix (return the ranked test set matrix, based on predicted vote values)
 + ranked_scoring (return the ranked score for the predicted matrix)
@@ -417,7 +418,7 @@ MAE(movie_pred,movie_observed_UI)
 
 ```
 
-#Appendix: Making sure the functions do what they're supposed to do
+# Appendix: Making sure the functions do what they're supposed to do
 
   Since most the operations take at least an hour to finish, I have built a smaller dataset for the user to check that the functions do work on a smaller dimension.
 
