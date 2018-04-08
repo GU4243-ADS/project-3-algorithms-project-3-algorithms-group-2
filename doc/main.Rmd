@@ -61,7 +61,8 @@ load <- T
 C1 <- 0.8
 C2 <- 0.8
 K <- 5
-alpha <- 5
+alpha <- 5 #to be used in the denominator of the ranked scoring
+d <- 0.01 #to be used as the neutral weight in ranked scoring
 
 
 ###############################################################
@@ -309,7 +310,7 @@ if(!load){
   # This calculation took me 15 minutes
   
   MS_pred_spm <- pred_matrix(MS_UI, MS_spm)
-  save(MS_pred_spm, file = "../output/MS_pred_spm.RData")
+  save(MS_pred_spm, file = "../output/MS_spm_predict.RData")
   
   
   # Calculate predictions for movies based on cosin correlation
@@ -360,10 +361,9 @@ if(!load){
   save(movie_pred_sim, file = "../output/movie_pred_sim.RData")
 }else{
   load("../output/MS_pred.Rdata")
-  load("../output/MS_pred_spm.RData")
+  load("../output/MS_spm_predict.RData")
   load("../output/MS_pred_ent.RData")
   load("../output/MS_cos_predict.RData")
-  load("../output/MS_pred_sim.RData")
   load("../output/MS_pred_sqd.RData")
   load("../output/movie_pred.RData")
   load("../output/movie_spm_predict.RData")
@@ -393,26 +393,26 @@ if(!load){
 # First transform the test data into UI matrix and correct the original matrix with test updates
 MS_test_UI <- MS_data_transform(MS_test)
 save(MS_test_UI, file = "../output/MS_test_UI.Rdata")
-MS_observed_UI <- match_the_matrix(MS_test_UI,MS_UI)
-save(MS_observed_UI, file = "../output/MS_observed_UI.Rdata")
 
 movie_test_UI <- movie_data_transform(movie_test)
 save(movie_test_UI, file = "../output/movie_test_UI.Rdata")
-movie_observed_UI <- match_the_matrix(movie_test_UI,movie_UI)
-save(movie_observed_UI, file = "../output/movie_observed_UI.Rdata")
-# So the observed matrix is MS_observed_UI, and movie_observed_UI
 
-
-ranked_scoring(MS_pred, MS_observed_UI,10,0.02)
-ranked_scoring(MS_pred_spm, MS_observed_UI,10)
-ranked_scoring(MS_pred_sqd, MS_observed_UI,10)
-ranked_scoring(MS_pred_cos, MS_observed_UI,10)
-ranked_scoring(MS_pred_ent, MS_observed_UI,10)
-ranked_scoring(MS_pred_sim, MS_observed_UI,10)
+# ranked scores for MS data
+MS_score<- ranked_scoring(MS_pred, MS_test_UI,alpha, d)
+MS_score_spm<- ranked_scoring(MS_spm_predict, MS_test_UI,alpha, d)
+MS_score_cos<- ranked_scoring(MS_cos_predict, MS_test_UI,alpha, d)
+MS_score_ent<- ranked_scoring(MS_pred_ent, MS_test_UI,alpha, d)
+MS_score_sqd<- ranked_scoring(MS_pred_sqd, MS_test_UI,alpha, d)
 
 
 
-MAE(movie_pred,movie_observed_UI)
+# Mean abslolute error for movie data
+movie_score<- MAE(movie_pred,movie_test_UI)
+movie_score_spm<- MAE(movie_spm_predict,movie_test_UI)
+movie_score_cos<- MAE(movie_cos_predict,movie_test_UI)
+movie_score_ent<- MAE(movie_pred_ent,movie_test_UI)
+movie_score_sqd<- MAE(movie_pred_sqd,movie_test_UI)
+
 
 
 

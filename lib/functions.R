@@ -287,20 +287,15 @@ pred_matrix <- function(data, simweights) {
 
 #######################################
 # Match matrix function
-# Input: Full matrix
-#        Test matrix
-# Output: return a full matrix, with nonzero values from test matrix corrected
+# Input: Full matrix = predicted matrix
+#        small matrix = test matrix
+# Output: return a small matrix, with values from predicted matrix
 #######################################
 match_the_matrix <- function(small_matrix, full_matrix){
   
-  result <- small_matrix
-  for(i in 1:nrow(small_matrix)){
-    for(j in 1:ncol(small_matrix)){
-      result[i,j] <- full_matrix[which(rownames(full_matrix) == rownames(small_matrix)[i]),
-                                 which(colnames(full_matrix) == colnames(small_matrix)[j])]
-    }
-  }
-  return(result)
+  small_matrix <- full_matrix[rownames(full_matrix) %in% rownames(small_matrix), 
+                              colnames(full_matrix) %in% colnames(small_matrix)]
+  return(small_matrix)
 }
 
 #######################################
@@ -311,6 +306,7 @@ match_the_matrix <- function(small_matrix, full_matrix){
 # Output: return the ranked test set matrix, based on predicted vote values.
 #######################################
 rank_matrix <- function(pred_matrix, observed_matrix){
+  
   result = matrix(NA, nrow(observed_matrix), ncol(observed_matrix))
   
   for (i in 1:nrow(observed_matrix)){
@@ -338,6 +334,12 @@ rank_matrix <- function(pred_matrix, observed_matrix){
 #######################################
 
 ranked_scoring <- function(pred_matrix, observed_matrix, alpha,d){
+  
+  # First we want to match the dimensions of the two matrix
+  pred_matrix <- match_the_matrix(observed_matrix, pred_matrix)
+  # Also, we want to strip the values of 1 given by the train set from the predicted matrix
+  pred_matrix <- ifelse(pred_matrix==1,0,pred_matrix)
+  
   # ranked matrix of the observed_matrix
   ranked_mat = rank_matrix(pred_matrix, observed_matrix)
   adjust = ifelse(ranked_mat - d > 0, ranked_mat - d, 0)
@@ -375,17 +377,14 @@ ranked_scoring <- function(pred_matrix, observed_matrix, alpha,d){
 # Output: return the Mean Absolute Error
 #######################################
 MAE <- function(pred_matrix, observed_matrix){
-  count = 0
-  result = 0
-  for(i in 1:nrow(observed_matrix)){
-    for(j in 1:ncol(observed_matrix)){
-      if(!is.na(observed_matrix[i,j])){
-        result = result + abs(pred_matrix[i,j]-observed_matrix[i,j])
-        count =count +1
-      }
-    }
-    # # Calculate the average absoluate deviation for each user
-    # result[i] <- sum(abs(pred_matrix[i,] - observed_matrix[i,]))/sum(observed_matrix[i,]!= 0)
+  if(!require("hydroGOF")){
+  install.packages("hydroGOF")
   }
-  return(result/count)
+  library("hydroGOF")
+  
+  # First we want to match the dimensions of the two matrix
+  pred_matrix <- match_the_matrix(observed_matrix, pred_matrix)
+  # Since the function mae calculates the absolute deviance by column, we transpose the matrices
+  score <- hydroGOF::mae(t(pred_matrix),t(observed_matrix),na.rm = TRUE)
+  return(mean(score))
 }
