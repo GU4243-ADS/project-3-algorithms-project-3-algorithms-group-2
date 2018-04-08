@@ -70,6 +70,8 @@ d <- 0.01 #to be used as the neutral weight in ranked scoring
 ###############################################################
 
 source("../lib/functions.R")
+source("../lib/simrank.R")
+
 
 
 if(!load){
@@ -186,11 +188,22 @@ if(!load){
   # The below took 1560 seconds
   
   tm_MS_sqd <- system.time(MS_sqd <- 
-                             calc_weight(MS_UI, run.sqdiff = T))
+                                calc_weight(MS_UI,run.sqdiff = T))
   save(MS_sqd, file = "../output/MS_sqd.RData")
   
   # Calculate the simrank weights on the movie data
-  # The below took 30+ hours
+  # The below took 48+ hours
+  
+  movie_simrank <- generate_simrank_rdata()
+  save(movie_simrank, file = "../output/movie_simrank.RData")
+  
+  # Calculate the simrank weights on the MS data
+  # We didn't have enough time to finish running for MS data.
+  
+  MS_sim <- simrank(MS_UI)
+  save(MS_simrank, file = "../output/MS_simrank.RData")
+  
+
   
   
 }else{
@@ -206,7 +219,6 @@ if(!load){
   load("../output/movie_spm.RData")
   load("../output/MS_spm.RData")
   load("../output/movie_sim.RData")
-  load("../output/MS_sim.RData")
 
 }
 ```
@@ -233,13 +245,13 @@ if(!load){
   # significance weight of movie set
   # Time 1336.62s
   tm_movie_sig <- system.time(movie_sig <- 
-                             calc_significance(movie_UI))
+                             calc_significance(movie_UI,lower = 50))
   save(movie_sig, file = "../output/movie_sig.RData")
   
   # significance weight of MS set
   # Time 1232.116s
   tm_MS_sig <- system.time(MS_sig <- 
-                             calc_significance(MS_UI))
+                             calc_significance(MS_UI,lower = 10))
   save(MS_sig, file = "../output/MS_sig.RData")
   
 }else{
@@ -422,25 +434,58 @@ movie_score_sqd<- MAE(movie_pred_sqd,movie_test_UI)
 
   Since most the operations take at least an hour to finish, I have built a smaller dataset for the user to check that the functions do work on a smaller dimension.
 
-```{r app}
+```{r app, message=FALSE, warning=FALSE, include=FALSE}
+load("../output/MS_UI.Rdata")
+load("../output/movie_UI.Rdata")
+
+# For the MS dataset
 example <- MS_UI[1:100,]
+example_sim <- calc_weight(example,run.pearson = T)
 example_cos <- calc_weight(example,run.cosin = T)
 example_spm <- calc_weight(example,run.spearman = T)
 example_sqd <- calc_weight(example,run.sqdiff = T)
 example_ent <- calc_weight(example, run.entropy = T)
+head(example_sim)[1:5]
+head(example_cos)[1:5]
+head(example_spm)[1:5]
+head(example_sqd)[1:5]
+head(example_ent)[1:5]
 
-example_sig <- calc_significance(example)
+# For the movie dataset
+example <- movie_UI[1:100,]
+example_sim <- calc_weight(example,run.pearson = T)
+example_cos <- calc_weight(example,run.cosin = T)
+example_spm <- calc_weight(example,run.spearman = T)
+example_sqd <- calc_weight(example,run.sqdiff = T)
+example_ent <- calc_weight(example, run.entropy = T)
+head(example_sim)[1:5]
+head(example_cos)[1:5]
+head(example_spm)[1:5]
+head(example_sqd)[1:5]
+head(example_ent)[1:5]
 
+# Calculate similarity weight
+example_sig <- calc_significance(example, 50)
+head(example_sig)[1:5]
+
+# Calculate variance weight
+example_var <- calc_weight_var(example, method = "pearson")
+head(example_var)[1:5]
+
+# Calculate the simrank
+example_simrank <- simrank(MS_UI[1:100,])
 
 ```
 
++ Notice that cosine and pearson similarity give the same weights on both dataset.
+This is because we centered the movie data when we computed the cosine similarity.
+
++ Pearson and spearman similarity are the same for the MS dataset.
++ Although we weren't able to run the simrank on MS data, our code does give accurate calculation on a smaller subset.
 
 
-```{r}
 
 
-
-```
 
 
 

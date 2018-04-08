@@ -141,7 +141,6 @@ calc_weight <- function(data, run.pearson=F, run.entropy=F, run.spearman=F, run.
   # triangle in order to save computation time and space.
   for(i in 1:(nrow(data)-1)) {
     weight_mat[i, i:nrow(data) ] <- apply(data[i:nrow(data),], 1, weight_func, data[i, ])
-    print(i)
   }
   weight_mat <- as.matrix(Matrix::forceSymmetric(round(weight_mat,4), uplo = "U"))
   return(weight_mat)
@@ -150,7 +149,7 @@ calc_weight <- function(data, run.pearson=F, run.entropy=F, run.spearman=F, run.
 
 # Calculate significance weighting
 
-calc_significance <- function(data) {
+calc_significance <- function(data,lower) {
   ## Calculate significance coefficient matrix
   ##
   ## input: data   - movie data or MS data in user-item matrix form
@@ -161,7 +160,7 @@ calc_significance <- function(data) {
   # Iniate the similarity weight matrix
   data       <- as.matrix(data)
   sig_weight <- matrix(NA, nrow = nrow(data), ncol = nrow(data))
-  
+  data[data==0]  <- NA
   significance_func <- function(rowA, rowB) {
     
     # significance_func takes as input two rows (thought of as rows of the data matrix) and 
@@ -169,12 +168,12 @@ calc_significance <- function(data) {
     
     joint_values <- !is.na(rowA) & !is.na(rowB)
     k <-  length(rowA[joint_values])
-    if (k >= 50) {
+    if (k >= lower) {
       num <- 1
       return(num)
     } 
     else {
-      num <- k/50
+      num <- k/lower
       return(num)
     }
     
@@ -183,7 +182,6 @@ calc_significance <- function(data) {
   # Loops over the rows and calculate sall similarities using significance_func
   for(i in 1:nrow(data)) {
     sig_weight[i, ] <- apply(data, 1, significance_func, data[i, ])
-    print(i)
   }
   return(sig_weight)
 }
@@ -191,34 +189,31 @@ calc_significance <- function(data) {
 
 calc_weight_var <- function(data, method = "pearson") {
   
-  ## Calculate variance weight matrix
+  ## Calculate similarity weight matrix
   ##
   ## input: data   - movie data or MS data in user-item matrix form
   ##        method - 'pearson'
   ##
-  ## output: variance weight matrix
+  ## output: similarity weight matrix
   
   
-  # Iniate the variance weight matrix
-  if(!require("wCorr")){
-    install.packages("wCorr")
-  }
+  # Iniate the similarity weight matrix
   library(wCorr)
   
-  data       <- as.matrix(movie_UI)
+  data       <- as.matrix(data)
   weight_mat_var <- matrix(NA, nrow = nrow(data), ncol = nrow(data))
   
   var_weight <- matrix(NA, ncol = ncol(data))
   mean <- colMeans(data, na.rm = T, dims = 1)
   data_sub_mean <- (data-mean)^2
   vari <- colSums(data_sub_mean, na.rm = T, dims = 1) / (ncol(data_sub_mean)-1)
+  
+  
   for (i in 1:ncol(data)) {
     max  <- max(data[,i], na.rm=T)
     min  <- min(data[,i], na.rm=T)
     var_weight[i] <- (vari[i] - min)/max
-    
   }
-  
   
   weight_func_var <- function(rowA, rowB) {
     
@@ -230,21 +225,18 @@ calc_weight_var <- function(data, method = "pearson") {
       return(0)
     } else {
       if (method == 'pearson') {
-        return(weightedCorr(rowA[joint_values], rowB[joint_values], method = "Pearson", weights = var_weight[joint_values], ML = FALSE, fast = TRUE))
+        return(weightedCorr(rowA[joint_values], rowB[joint_values], method = "pearson", weights = var_weight[joint_values], ML = FALSE, fast = TRUE))
       }
     }
   }
   
   # Loops over the rows and calculate sall similarities using weight_func
-  for(i in 1:(nrow(data)-1)) {
-    weight_mat[i, i:nrow(data) ] <- apply(data[i:nrow(data),], 1, weight_func_var, data[i, ])
+  for(i in 1:nrow(data)) {
+    weight_mat_var[i, ] <- apply(data, 1, weight_func_var, data[i, ])
     print(i)
   }
   return(round(weight_mat_var, 4))
 }
-
-
-
 
 pred_matrix <- function(data, simweights) {
   
