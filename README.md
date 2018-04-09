@@ -39,7 +39,7 @@ Model-based collaborative filtering involves developing and optimizing models to
 
 #### Results 
 
-Due to time constraints, we were unable to run the EM algorithm on the whole movie dataset; we instead ran on a small subset of each movie data and extracted the parameters (gamma array, 3-dimensional array with probabilities of giving a certain movie a certain score if a user belongs to a certain cluster, and assignment matrix, an . Given additional time, we would have evaluated the model's performance using MAE and Ranked Scoring to compare against the memory-based algorithm. In addition, computing running time would have allowed us to confirm one of the biggest advantages of the model-based algorithm, computational efficiency. 
+We ran the EM algorithm on the whole movie and MS datasets; however, due to time constraints, we only ran 10 iterations and extracted the parameters: gamma array (a 3-dimensional array with probabilities of giving a certain movie a certain score if a user belongs to a certain cluster) and assignment matrix (a matrix with users in rows and clusters in columns and probabilities of belonging to that cluster). Given additional time, we would have evaluated the model's performance using MAE and Ranked Scoring to compare against the memory-based algorithm. Computing running time would have allowed us to confirm one of the biggest advantages of the model-based algorithm, computational efficiency. 
 
 ### Contribution statement: 
 
