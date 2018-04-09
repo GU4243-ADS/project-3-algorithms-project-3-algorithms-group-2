@@ -46,7 +46,7 @@ Due to time constraints, we were unable to run the EM algorithm on the whole mov
 + Wanting Cheng:
 + Kelvin Kai:
 + Joo Kim: Helped code and organize E and M-step functions, created and contributed to readme and PPT presentation. 
-+ Kenny Warner: 
++ Kenny Warner: Helped code E step and created prediction functions and prediction matrices. 
 
 Following [suggestions](http://nicercode.github.io/blog/2013-04-05-projects/) by [RICH FITZJOHN](http://nicercode.github.io/about/#Team) (@richfitz). This folder is orgarnized as follows.
 
