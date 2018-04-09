@@ -531,13 +531,13 @@ source("../lib/em_pred_MS.R")
 
 ##### Prediction with MS data ##########
 
-ms_pred <- em_pred_MS(data = MS_UI, gamma = gamma, assign_mat = assign_mat)
+ms_pred_model <- em_pred_MS(data = MS_UI, gamma = gamma, assign_mat = assign_mat)
 
 save(MS_pred, file = "../output/ms_pred.Rdata")
 
 ##### Prediction with movie data ##########
 
-movie_pred <- em_pred_movie(data = movie_UI, gamma = gamma, assign_mat = assign_mat)
+movie_pred_model <- em_pred_movie(data = movie_UI, gamma = gamma, assign_mat = assign_mat)
 
 save(movie_pred, file = "../output/movie_pred.Rdata")
 
