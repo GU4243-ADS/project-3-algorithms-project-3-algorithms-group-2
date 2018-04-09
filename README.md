@@ -43,7 +43,7 @@ We ran the EM algorithm on the whole movie and MS datasets; however, due to time
 
 ### Contribution statement: 
 
-+ Wanting Cheng: EM Algorithm, Memory-Based:entropy, mean-square-difference, simrank, impliemtation and prediction. 
++ Wanting Cheng: Memory-Based: entropy, mean-square-difference, simrank, impliemtation and prediction, compiled main.R and function.R, coded evaluation metrics for both ranked scoring and MAE, EM Algorithm. 
 + Kai Li: EM Algorithm, Memory-Based:spearman, consine similiarty, significant weighting, variance weighting, impliemtation and prediction.
 + Joo Kim: Helped code and organize E and M-step functions, created and contributed to readme and PPT presentation. 
 + Kenny Warner: Helped code E step and created prediction functions and prediction matrices. 
