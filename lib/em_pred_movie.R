@@ -14,4 +14,5 @@ em_pred_movie <- function(gamma, assign_mat) {
         exp_score_mat[n,m] <- score
     }
   }
+  return(exp_score_mat)
 }
