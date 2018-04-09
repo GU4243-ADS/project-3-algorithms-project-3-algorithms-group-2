@@ -504,14 +504,14 @@ This is because we centered the movie data when we computed the cosine similarit
 # Model-based Algorithm Step 2: Calculating parameters and assignment matrix 
 
 ## Functions
-+ em_movie (a multi-level iterative function for eachmovie data with the following steps and parameters) 
++ em_movie (a multi-level iterative function for eachmovie data with the following steps and parameters):
 
-- e_step (short for Expectation-Step): 
+  - e_step (short for Expectation-Step): 
     Input: Mu (mean of each cluster) & gamma array (a 3-dimensional arraycomposed of probabilities of
     rating a certain movie a certain score given a user belongs to a certain cluster)
     Output: Assignment matrix (probabilities of a user belonging to each cluster) 
 
-- m_step (short for Maximization-Step): 
+  - m_step (short for Maximization-Step): 
     Input: Updated assignment matrix 
     Output: Updated mu and gamma parameters 
 
@@ -533,15 +533,12 @@ similar to our starting matrix of users by movies, with each data point being th
 
 
 ```{r}
-source("../lib/em_pred_movie.R)
-source("../lib/em_pred_MS.R)
+source("../lib/em_pred_movie.R")
+source("../lib/em_pred_MS.R")
 
 movie_pred <- function(gamma = gamma, assign_mat = assign_mat)
 ms_pred <- function(gamma = gamma, assign_mat = assign_mat)
 
-
-
-TKTK
 ```
 
 
