@@ -524,10 +524,22 @@ em_movie <- function(data = movie_UI, C = 5, tau = 0.5, iter = 100)
 
 # Model-based Algorithm Step 3: Making predictions
 
+After the E and M steps are complete, to make predictions we take the gamma array, which gives us the probability of a particular
+movie being rated a particular score, given a specific cluster, and the assignment matrix which gives us the probability
+of a particular user being in any given cluster. We then find the index of the max value of each user to give us the cluster
+assignment of that user, and then find the index of the max probability of scores 1 - 6 (or the probabilities in the case of 
+the MS data) for each movie (website), given the cluster assignment. With that knowledge we generate a prediction matrix 
+similar to our starting matrix of users by movies, with each data point being the predicted score for that user and movie. 
 
 
 ```{r}
-source()
+source("../lib/em_pred_movie.R)
+source("../lib/em_pred_MS.R)
+
+movie_pred <- function(gamma = gamma, assign_mat = assign_mat)
+ms_pred <- function(gamma = gamma, assign_mat = assign_mat)
+
+
 
 TKTK
 ```
