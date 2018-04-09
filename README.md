@@ -27,9 +27,9 @@ For the memory-based algorithm, the estimate of items to be recommended is large
 
 We evaluated the performance of our memory-based algorithm using **Mean Absolute Error (MAE)** and **Ranked Scoring** metrics. MAE calculates how far our predictions deviate from the outcome and is used on the movie dataset. Ranked scoring is applied on MS dataset and uses a utility function to evaluate how satisfied the user will be if she sees our ranked list of recommended items, based on the real outcome. Ranking score was used to evalute the movie dataset. Below are the results. 
 
-![](figs/name.png)
+![](figs/Movie.png)
 
-![](figs/name.png)
+![](figs/MS.png)
 
 ### Model-based Algorithm
 
@@ -39,13 +39,13 @@ Model-based collaborative filtering involves developing and optimizing models to
 
 #### Results 
 
-We were unable to optimize the E-step for this project. Given additional time, we would have debugged the e-step and evaluated the model's performance using MAE and Ranked Scoring to compare against the memory-based algorithm. In addition, computing running time would have allowed us to confirm one of the biggest advantages of the model-based algorithm, computational efficiency. 
+Due to time constraints, we were unable to run the EM algorithm on the whole movie dataset; we instead ran on a small subset of each movie data and extracted the parameters (gamma array, 3-dimensional array with probabilities of giving a certain movie a certain score if a user belongs to a certain cluster, and assignment matrix, an . Given additional time, we would have evaluated the model's performance using MAE and Ranked Scoring to compare against the memory-based algorithm. In addition, computing running time would have allowed us to confirm one of the biggest advantages of the model-based algorithm, computational efficiency. 
 
 ### Contribution statement: 
 
 + Wanting Cheng:
 + Kelvin Kai:
-+ Joo Kim: Coded and organized E and M-step functions, created and contributed to readme and PPT presentation. 
++ Joo Kim: Helped code and organize E and M-step functions, created and contributed to readme and PPT presentation. 
 + Kenny Warner: 
 
 Following [suggestions](http://nicercode.github.io/blog/2013-04-05-projects/) by [RICH FITZJOHN](http://nicercode.github.io/about/#Team) (@richfitz). This folder is orgarnized as follows.
