@@ -1,9 +1,12 @@
-em_pred_movie <- function(gamma, assign_mat) {
+em_pred_MS <- function(data, gamma, assign_mat) {
+
+n_user <- nrow(data)
+n_item <- ncol(data)
 
   #######PREDICTION - MS Data##########
   
   # exp_clust <- matrix(0, nrow = n_user, ncol = C)
-  exp_score_mat <- matrix(0, nrow = n_user, ncol = n_movie)
+  exp_score_mat <- matrix(0, nrow = n_user, ncol = n_item)
   
   #This tells us what cluster each user belongs to
   for (n in 1:n_user) {

@@ -1,3 +1,7 @@
+###################################################################
+### Model-based Collaborative Filtering Algorithm EM Clustering###
+###################################################################
+
 em_step <- function(data, C, scores, iteration, tol, conver){
   
   # Step 0: Initialize Parameters 

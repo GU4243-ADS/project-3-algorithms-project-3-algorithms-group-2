@@ -300,6 +300,8 @@ if(!load){
 ######## Calculating the Predictions for the Users ########
 ###########################################################
 
+source("../lib/Memory-based.R")
+
 if(!load){
   
   # Calculate predictions for MS based on pearson correlation
@@ -506,7 +508,17 @@ This is because we centered the movie data when we computed the cosine similarit
 ```{r step3.1}
 source("../lib/em_function.R")
 
-em_step <- function(data = movie_UI, C = 5, tau = 0.5, iter = 100)
+##### Implement EM for MS data ##########
+
+EM_10_MS <- em_step(MS_UI, C = 5, scores = 2, iteration = 10, tol = 0.01, conver = 1)
+
+save(EM_10_MS, file = "../output/EM_10_MS.Rdata")
+
+##### Implement EM for movie data ##########
+
+EM_10_Movie <- em_step(movie_UI, C = 5, scores = 6, iteration = 10, tol = 0.01, conver = 1)
+
+save(EM_10_Movie, file = "../output/EM_10_Movie.Rdata")
 ```
 
 ### Step 3.2: Making predictions
@@ -517,8 +529,17 @@ After the E and M steps are complete, to make predictions we take the gamma arra
 source("../lib/em_pred_movie.R")
 source("../lib/em_pred_MS.R")
 
-movie_pred <- function(data = data, gamma = gamma, assign_mat = assign_mat)
-ms_pred <- function(data = data, gamma = gamma, assign_mat = assign_mat)
+##### Prediction with MS data ##########
+
+ms_pred <- em_pred_MS(data = MS_UI, gamma = gamma, assign_mat = assign_mat)
+
+save(MS_pred, file = "../output/ms_pred.Rdata")
+
+##### Prediction with movie data ##########
+
+movie_pred <- em_pred_movie(data = movie_UI, gamma = gamma, assign_mat = assign_mat)
+
+save(movie_pred, file = "../output/movie_pred.Rdata")
 
 ```
 

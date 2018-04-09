@@ -1,11 +1,7 @@
 
 ###################################################################
-### Memory-based Collaborative Filtering Algorithm Starter Code ###
+### Memory-based Collaborative Filtering Algorithm ################
 ###################################################################
-
-### Authors: 
-### Project 3
-### ADS Spring 2018
 
 
 ########################################################
@@ -174,8 +170,6 @@ load("./output/MS_pred.Rdata")
 load("./output/movie_sqd.Rdata")
 
 
-
-
 # Calculate predictions for MS based on pearson correlation
 # This calculation took me 15 minutes
 
@@ -199,4 +193,77 @@ save(MS_pred_sqd, file = "./output/MS_pred_sqd.RData")
 
 movie_pred_sqd <- pred_matrix(movie_UI, movie_sqd)
 save(movie_pred_sqd, file = "./output/movie_pred_sqd.RData")
+
+
+#Time 288.66s
+tm_MS_cos_pred <- system.time(MS_cos_predict <- pred_matrix(MS_UI,MS_cos))
+save(MS_cos_predict, file = "../output/MS_cos_predict.RData")
+
+#Time 3290.46s
+tm_movie_cos <- system.time(movie_cos_predict <-
+pred_matrix(movie_UI,movie_cos))
+save(movie_cos_predict, file = "../output/movie_cos_predict.RData")
+
+#Time 3059.67s
+tm_movie_sqd_pred <- system.time(movie_pred_sqd <- pred_matrix(movie_UI, movie_sqd))
+save(movie_pred_sqd, file = "../output/movie_pred_sqd.RData")
+
+#Time: 273.13s
+tm_MS_ent_pred <- system.time(MS_pred_ent <- pred_matrix(MS_UI, MS_ent))
+save(MS_pred_ent, file = "../output/MS_pred_ent.RData")
+
+#Time: 3361.19s
+tm_movie_ent_pred <- system.time(movie_pred_ent <- pred_matrix(movie_UI, movie_ent))
+save(movie_pred_ent, file = "../output/movie_pred_ent.RData")
+
+#Time 352.22ss
+tm_MS_spm_pred <- system.time(MS_spm_predict <- pred_matrix(MS_UI, MS_spm))
+save(MS_spm_predict, file = "../output/MS_spm_predict.RData")
+
+#Time 3228.86s
+tm_movie_spm <- system.time(movie_spm_predict <-
+pred_matrix(movie_UI,movie_spm))
+save(movie_spm_predict, file = "../output/movie_spm_predict.RData")
+
+# Time 1915.88s
+tm_movie_spm_var <- system.time(movie_spm_variance <-
+calc_weight_var(movie_UI, method = "pearson"))
+save(movie_spm_variance, file = "../output/movie_pear_variance.RData")
+
+#Time 791.53s
+tm_MS_pear_var <- system.time(MS_pear_variance <-
+calc_weight_var(MS_UI, method = "pearson"))
+save(MS_pear_variance, file = "../output/MS_pear_variance.RData")
+
+#Time 1336.62s
+tm_movie_sig <- system.time(movie_sig <-
+calc_significance(movie_UI))
+save(movie_sig, file = "../output/movie_sig.RData")
+
+#Time 308.93s
+tm_MS_pear_sig_pred <- system.time(MS_pear_sig_pred <- pred_matrix(MS_UI,MS_pear_sig))
+save(MS_pear_sig_pred, file = "../output/MS_pear_sig_pred.RData")
+
+#Time 405.97s
+tm_MS_pear_var_pred <- system.time(MS_pear_var_pred <- pred_matrix(MS_UI,MS_pear_variance))
+save(MS_pear_var_pred, file = "../output/MS_pear_var_pred.RData")
+
+#Time 486.67s
+tm_MS_pear_sig_var_pred <- system.time(MS_pear_sig_var_pred <- pred_matrix(MS_UI,MS_pear_sig_var))
+save(MS_pear_sig_var_pred, file = "../output/MS_pear_sig_var_pred.RData")
+
+#Time 3314.54s
+tm_movie_pear_sig_pred <- system.time(movie_pear_sig_pred <- pred_matrix(movie_UI,movie_pear_sig))
+save(movie_pear_sig_pred, file = "../output/movie_pear_sig_pred.RData")
+
+#Time 3255.58s
+tm_movie_pear_var_pred <- system.time(movie_pear_var_pred <- pred_matrix(movie_UI,movie_pear_variance))
+save(movie_pear_var_pred, file = "../output/movie_pear_var_pred.RData")
+
+#TIme 3287.58s
+tm_movie_pear_sig_var_pred <- system.time(movie_pear_sig_var_pred <- pred_matrix(movie_UI,movie_pear_sig_var))
+save(movie_pear_sig_var_pred, file = "../output/movie_pear_sig_var_pred.RData")
+
+_
+
 

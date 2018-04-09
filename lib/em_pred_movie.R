@@ -1,4 +1,7 @@
-em_pred_movie <- function(gamma, assign_mat) {
+em_pred_movie <- function(data, gamma, assign_mat) {
+  
+n_user <- nrow(data)
+n_movie <- ncol(data)
   
   #######PREDICTION - Movie Data##########
   
