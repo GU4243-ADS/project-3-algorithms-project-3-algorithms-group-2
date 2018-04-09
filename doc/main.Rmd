@@ -387,7 +387,20 @@ if(!load){
 }
 ```
 
-# Step4: Calculating predictions
+# Step5: Model-based algo
+
+## EM algorithm
+```{r step5}
+
+
+
+
+```
+
+
+
+
+# Step6: Evaluating the performance of memory-based algo
 
 ## Functions
 + match_the_matrix (return a full matrix, with nonzero values from test matrix corrected)
@@ -396,7 +409,7 @@ if(!load){
 + MAE (return the Mean Absolute Error)
 
 
-```{r step5}
+```{r step6}
 
 ###########################################################
 ############## Evaluating the Predictions #################
