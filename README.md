@@ -12,7 +12,7 @@ Term: Spring 2018
 
 + Project title: Memory and model-based collaborative filtering
 + Team Number: 4
-+ Team Members: Wanting Cheng, Kelvin Kai, Joo Kim, Kenny Warner 
++ Team Members: Wanting Cheng, Kai Li, Joo Kim, Kenny Warner 
 + Project summary: 
 
 For this project, we implemented and evaluated the performance of memory and model-based collaborative filtering algorithms on two datasets: Microsoft webpage data and movie data. Microsoft dataset contains a log of user visits to webpages, while movie data contains a list of movies that users have rated from 1 to 6.
