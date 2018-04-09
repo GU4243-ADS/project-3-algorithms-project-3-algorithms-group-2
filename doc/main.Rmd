@@ -1,7 +1,7 @@
 ---
 title: "Project 3"
 author: "Group 2"
-date: "April 6, 2018"
+date: "April 9, 2018"
 output:
   pdf_document: default
   html_document: default
@@ -10,11 +10,29 @@ output:
 # Step0: Load library and data set
 
 ```{r step0}
+############################ Package installation and loading ##################################
 
-if(!require("lsa")){
-install.packages("lsa")
+packages.used = c("lsa", "matrixStats", "dplyr", "abind")
+
+# check packages that need to be installed.
+packages.needed = setdiff(packages.used,
+intersect(installed.packages()[,1],
+packages.used))
+
+# install additional packages
+if(length(packages.needed)>0){
+install.packages(packages.needed, dependencies = TRUE)
 }
+
+if(!require("EBImage")){
+  source("https://bioconductor.org/biocLite.R")
+  biocLite("EBImage")
+}
+
 library("lsa")
+library("matrixStats")
+library("dplyr")
+library("abind")
 
 
 ############################## Set working directory here ####################################
@@ -97,7 +115,7 @@ if(!load){
 
 ```
 
-# Step2: Calculate similarity weights
+# Memory-Based Algorithm Step2: Calculate similarity weights
 
 ## Functions
 + calc_weight (Calculate similarity weight matrix, except for simrank)
@@ -223,7 +241,7 @@ if(!load){
 }
 ```
 
-# Step3: Adding significance weights and variance weights
+# Memory-Based Algorithm Step3: Adding significance weights and variance weights
 
 ## Functions
 + calc_significance (Calculate significance coefficient matrix)
@@ -287,7 +305,7 @@ if(!load){
 
 ```
 
-# Step4: Calculating predictions
+# Memory-Based Algorithm Step4: Calculating predictions
 
 ## Functions
 + pred_matrix (Calculate prediction matrix)
@@ -387,7 +405,7 @@ if(!load){
 }
 ```
 
-# Step4: Calculating predictions
+# Memory-Based Algorithm Step4: Evaluating predictions
 
 ## Functions
 + match_the_matrix (return a full matrix, with nonzero values from test matrix corrected)
@@ -432,7 +450,7 @@ movie_score_sqd<- MAE(movie_pred_sqd,movie_test_UI)
 
 # Appendix: Making sure the functions do what they're supposed to do
 
-  Since most the operations take at least an hour to finish, I have built a smaller dataset for the user to check that the functions do work on a smaller dimension.
+Since most the operations take at least an hour to finish, I have built a smaller dataset for the user to check that the functions do work on a smaller dimension.
 
 ```{r app, message=FALSE, warning=FALSE, include=FALSE}
 load("../output/MS_UI.Rdata")
@@ -482,6 +500,50 @@ This is because we centered the movie data when we computed the cosine similarit
 
 + Pearson and spearman similarity are the same for the MS dataset.
 + Although we weren't able to run the simrank on MS data, our code does give accurate calculation on a smaller subset.
+
+# Model-based Algorithm Step 2: Calculating parameters and assignment matrix 
+
+## Functions
++ em_movie (a multi-level iterative function for eachmovie data with the following steps and parameters) 
+
+- e_step (short for Expectation-Step): 
+    Input: Mu (mean of each cluster) & gamma array (a 3-dimensional arraycomposed of probabilities of
+    rating a certain movie a certain score given a user belongs to a certain cluster)
+    Output: Assignment matrix (probabilities of a user belonging to each cluster) 
+
+- m_step (short for Maximization-Step): 
+    Input: Updated assignment matrix 
+    Output: Updated mu and gamma parameters 
+
+
+```{r}
+source("../lib/em_function.R")
+
+em_movie <- function(data = movie_UI, C = 5, tau = 0.5, iter = 100)
+```
+
+# Model-based Algorithm Step 3: Making predictions
+
+
+
+```{r}
+source()
+
+TKTK
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
