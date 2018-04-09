@@ -218,7 +218,7 @@ if(!load){
   load("../output/MS_cos.RData")
   load("../output/movie_spm.RData")
   load("../output/MS_spm.RData")
-  load("../output/movie_sim.RData")
+  load("../output/movie_simrank.RData")
 
 }
 ```
@@ -362,15 +362,15 @@ if(!load){
   
   # Calculate predictions for MS based on simrank similarity
   # This calculation took me 15 minutes
-  
-  MS_pred_sim <- pred_matrix(MS_UI, MS_sim)
-  save(MS_pred_sim, file = "../output/MS_pred_sim.RData")
+  # 
+  # MS_pred_simrank <- pred_matrix(MS_UI, MS_simrank)
+  # save(MS_pred_sim, file = "../output/MS_pred_sim.RData")
   
   # Calculate predictions for movies based on simrank similarity
   # This calculation took me 1+ hour
   
-  movie_pred_sim <- pred_matrix(movie_UI, movie_sim)
-  save(movie_pred_sim, file = "../output/movie_pred_sim.RData")
+  movie_pred_simrank <- pred_matrix(movie_UI, movie_simrank)
+  save(movie_pred_simrank, file = "../output/movie_pred_simrank.RData")
 }else{
   load("../output/MS_pred.Rdata")
   load("../output/MS_spm_predict.RData")
@@ -382,7 +382,7 @@ if(!load){
   load("../output/movie_cos_predict.RData")
   load("../output/movie_pred_ent.RData")
   load("../output/movie_pred_sqd.RData")
-  load("../output/movie_pred_sim.RData")
+  load("../output/movie_pred_simrank.RData")
 
 }
 ```
