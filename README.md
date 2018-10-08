@@ -1,7 +1,7 @@
 # Spring2018
 
 
-# Project 3: Collaborative Filtering Implementation and Evaluation
+# Project 3- Collaborative Filtering Implementation and Evaluation
 
 ----
 
